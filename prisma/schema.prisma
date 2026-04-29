@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String     @id @default(uuid())
+  clerkId   String     @unique
+  email     String     @unique
+  createdAt DateTime   @default(now())
+  tierLists TierList[]
+}
+
+model TierList {
+  id         String   @id @default(uuid())
+  title      String
+  userId     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  publicSlug String?  @unique
+  isPublic   Boolean  @default(false)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tiers      Tier[]
+  items      Item[]
+
+  @@index([userId, createdAt])
+}
+
+model Tier {
+  id         String   @id @default(uuid())
+  name       String
+  bgColor    String
+  textColor  String
+  order      Int
+  tierListId String
+  tierList   TierList @relation(fields: [tierListId], references: [id], onDelete: Cascade)
+  items      Item[]
+
+  @@unique([tierListId, order])
+  @@index([tierListId])
+}
+
+model Item {
+  id         String    @id @default(uuid())
+  imageUrl   String
+  tierId     String?
+  tierListId String
+  order      Int
+  createdAt  DateTime  @default(now())
+  tier       Tier?      @relation(fields: [tierId], references: [id], onDelete: SetNull)
+  tierList   TierList   @relation(fields: [tierListId], references: [id], onDelete: Cascade)
+
+  @@index([tierId, order])
+  @@index([tierListId, order])
+}

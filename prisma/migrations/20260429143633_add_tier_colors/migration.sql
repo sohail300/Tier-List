@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Tier" ALTER COLUMN "bgColor" DROP DEFAULT,
+ALTER COLUMN "textColor" DROP DEFAULT;

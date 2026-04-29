@@ -1,0 +1,43 @@
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { TierListEditorShell } from "@/components/tier-list-editor-shell";
+import { requireDbUser } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { serializeTierList } from "@/lib/tier-list";
+
+export default async function TierListEditorPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { userId } = await auth();
+  if (!userId) {
+    redirect("/");
+  }
+
+  const dbUser = await requireDbUser();
+  const { id } = await params;
+  const tierList = await prisma.tierList.findUnique({
+    where: { id },
+    include: {
+      tiers: {
+        include: { items: true },
+      },
+      items: true,
+    },
+  });
+
+  if (!tierList || tierList.userId !== dbUser.id) {
+    redirect("/dashboard");
+  }
+
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-[#0c0c11] text-zinc-100">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
+
+      <main className="relative mx-auto w-full max-w-6xl px-6 py-8">
+        <TierListEditorShell initial={serializeTierList(tierList)} />
+      </main>
+    </div>
+  );
+}

@@ -1,0 +1,51 @@
+"use client";
+
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import clsx from "clsx";
+import Image from "next/image";
+
+type Props = {
+  id: string;
+  imageUrl: string;
+};
+
+export function DraggableItem({ id, imageUrl }: Props) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id,
+  });
+
+  return (
+    <button
+      ref={setNodeRef}
+      type="button"
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+      }}
+      className={clsx(
+        "relative h-20 w-20 overflow-hidden rounded-lg border border-zinc-700 bg-zinc-900 transition",
+        isDragging
+          ? "z-50 scale-105 border-zinc-500 shadow-lg shadow-black/60"
+          : "hover:border-zinc-500",
+      )}
+      {...attributes}
+      {...listeners}
+    >
+      <Image
+        src={imageUrl}
+        alt="Tier item"
+        fill
+        className="object-cover"
+        sizes="80px"
+      />
+    </button>
+  );
+}
