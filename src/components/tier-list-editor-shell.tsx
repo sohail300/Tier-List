@@ -4,6 +4,7 @@ import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { TierBoard } from "@/components/tier-board";
+import { TierListView } from "@/components/tier-list-view";
 import type { TierListData } from "@/types/tier-list";
 
 type Props = {
@@ -36,21 +37,23 @@ export function TierListEditorShell({ initial }: Props) {
                 ? "Saving..."
                 : "All changes saved"}
           </span>
-          <button
-            type="button"
-            onClick={async () => {
-              if (!manualSaveHandler || viewOnly) {
-                return;
-              }
-              setManualSaving(true);
-              await manualSaveHandler();
-              setManualSaving(false);
-            }}
-            className="rounded-md cursor-pointer border border-orange-300/40 bg-orange-500 px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-[#251300] transition hover:bg-orange-400 disabled:cursor-not-allowed disabled:opacity-70"
-            disabled={!manualSaveHandler || manualSaving || viewOnly}
-          >
-            Save
-          </button>
+          {!viewOnly && (
+            <button
+              type="button"
+              onClick={async () => {
+                if (!manualSaveHandler) {
+                  return;
+                }
+                setManualSaving(true);
+                await manualSaveHandler();
+                setManualSaving(false);
+              }}
+              className="rounded-md cursor-pointer border border-orange-300/40 bg-orange-500 px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-[#251300] transition hover:bg-orange-400 disabled:cursor-not-allowed disabled:opacity-70"
+              disabled={!manualSaveHandler || manualSaving}
+            >
+              Save
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setViewOnly((prev) => !prev)}
@@ -61,14 +64,17 @@ export function TierListEditorShell({ initial }: Props) {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-zinc-800/80 bg-zinc-950/70 p-3 shadow-[0_18px_50px_rgba(0,0,0,0.35)] sm:p-4">
-        <TierBoard
-          initial={initial}
-          readOnly={viewOnly}
-          onSavingChange={setIsSaving}
-          onManualSaveReady={(save) => setManualSaveHandler(() => save)}
-        />
-      </div>
+      {viewOnly ? (
+        <TierListView data={initial} />
+      ) : (
+        <div className="rounded-2xl border border-zinc-800/80 bg-zinc-950/70 p-3 shadow-[0_18px_50px_rgba(0,0,0,0.35)] sm:p-4">
+          <TierBoard
+            initial={initial}
+            onSavingChange={setIsSaving}
+            onManualSaveReady={(save) => setManualSaveHandler(() => save)}
+          />
+        </div>
+      )}
     </>
   );
 }

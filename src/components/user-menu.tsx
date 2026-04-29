@@ -38,7 +38,7 @@ export function UserMenu({ fullName, email, imageUrl }: UserMenuProps) {
   }, []);
 
   return (
-    <div className="group relative" ref={menuRef}>
+    <div className="group relative z-50" ref={menuRef}>
       {/* biome-ignore lint/a11y/noStaticElementInteractions: Div trigger requested */}
       <div
         className="flex cursor-pointer list-none items-center gap-2 px-3 py-1.5 text-sm text-zinc-200 transition"
@@ -71,7 +71,7 @@ export function UserMenu({ fullName, email, imageUrl }: UserMenuProps) {
       </div>
 
       <div
-        className={`absolute right-0 z-20 mt-2 w-64 rounded-xl border border-zinc-700 bg-zinc-900 p-3 shadow-xl ${
+        className={`absolute right-0 z-50 mt-2 w-64 rounded-xl border border-zinc-700 bg-zinc-900 p-3 shadow-xl ${
           isOpen ? "" : "hidden"
         }`}
       >

@@ -73,9 +73,9 @@ export function TierRow({
         <div
           id={tier.id}
           ref={setNodeRef}
-          className={`min-h-24 p-3 transition ${isOver ? "bg-zinc-900/80" : "bg-transparent"}`}
+          className={`min-h-22 transition ${isOver ? "bg-zinc-900/80" : "bg-transparent"}`}
         >
-          <div className="flex min-h-18 flex-wrap gap-2">
+          <div className="flex min-h-22 flex-wrap gap-0">
             {tier.items.map((item) => (
               <DraggableItem
                 key={item.id}

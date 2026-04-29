@@ -31,7 +31,7 @@ export function DraggableItem({ id, imageUrl }: Props) {
         transition,
       }}
       className={clsx(
-        "relative h-20 w-20 overflow-hidden rounded-lg border border-zinc-700 bg-zinc-900 transition",
+        "relative h-22 w-22 overflow-hidden border border-zinc-700 bg-zinc-900 transition",
         isDragging
           ? "z-50 scale-105 border-zinc-500 shadow-lg shadow-black/60"
           : "hover:border-zinc-500",

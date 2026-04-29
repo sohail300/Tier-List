@@ -3,6 +3,7 @@
 import { Copy, Pencil, Share2, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Toaster, toast } from "react-hot-toast";
 import type { TierListData } from "@/types/tier-list";
 
 type Props = {
@@ -54,11 +55,12 @@ export function DashboardGrid({ tierLists }: Props) {
     await navigator.clipboard.writeText(
       `${window.location.origin}/share/${data.publicSlug}`,
     );
-    alert("Share link copied to clipboard");
+    toast.success("Share link copied to clipboard");
   };
 
   return (
     <div className="space-y-6">
+      <Toaster position="top-center" />
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-zinc-100">Your Tier Lists</h1>
         <button
