@@ -1,14 +1,27 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import { auth } from "@/auth";
 
-const isProtectedRoute = createRouteMatcher([
-  "/dashboard(.*)",
-  "/tier-lists(.*)",
-  "/api/tier-lists(.*)",
-  "/api/upload(.*)",
-]);
+const protectedPrefixes = [
+  "/dashboard",
+  "/tier-lists",
+  "/api/tier-lists",
+  "/api/upload",
+];
 
-export default clerkMiddleware(async (auth, request) => {
-  if (isProtectedRoute(request)) await auth.protect();
+function isProtectedRoute(pathname: string) {
+  return protectedPrefixes.some((prefix) => pathname.startsWith(prefix));
+}
+
+export default auth((request) => {
+  if (!isProtectedRoute(request.nextUrl.pathname) || request.auth) {
+    return;
+  }
+
+  if (request.nextUrl.pathname.startsWith("/api")) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  return NextResponse.redirect(new URL("/", request.nextUrl.origin));
 });
 
 export const config = {

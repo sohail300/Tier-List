@@ -1,19 +1,76 @@
 @import "tailwindcss";
 
 :root {
-  --background: #09090b;
-  --foreground: #f4f4f5;
+  /* Ink surfaces — near-black, tinted warm/orange, stepped by lightness (never blur/glow) */
+  --ink-950: #0b0806;
+  --ink-900: #120d0a;
+  --ink-800: #1a130f;
+  --ink-700: #241a14;
+  --ink-600: #30231b;
+  --ink-500: #3d2c22;
+
+  --background: var(--ink-950);
+  --foreground: #f5efe7;
+  --muted: #b6a89b;
+  --subtle: #7d6f63;
+
+  /* One crimson-orange accent, used sparingly but hard */
+  --accent: #ef4123;
+  --accent-strong: #ff5a32;
+  --accent-dim: #a82f18;
+  --accent-ink: #180800;
+
+  /* Bold, saturated tier scale — never pastel */
+  --tier-s: #ff3b30;
+  --tier-a: #ff8a00;
+  --tier-b: #ffd400;
+  --tier-c: #3ddc66;
+  --tier-d: #3b8bff;
+  --tier-ink: #140c06;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+
+  --color-ink-950: var(--ink-950);
+  --color-ink-900: var(--ink-900);
+  --color-ink-800: var(--ink-800);
+  --color-ink-700: var(--ink-700);
+  --color-ink-600: var(--ink-600);
+  --color-ink-500: var(--ink-500);
+
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-dim: var(--accent-dim);
+  --color-accent-ink: var(--accent-ink);
+
+  --font-display: var(--font-anton);
+  --font-sans: var(--font-barlow);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-display), Impact, sans-serif;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+/* Repeating diagonal hazard stripe — used sparingly as a decorative rule, not a gradient */
+.stripe-accent {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--accent) 0px,
+    var(--accent) 10px,
+    var(--ink-950) 10px,
+    var(--ink-950) 20px
+  );
 }

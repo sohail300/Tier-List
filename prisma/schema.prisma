@@ -10,7 +10,7 @@ datasource db {
 
 model User {
   id        String     @id @default(uuid())
-  clerkId   String     @unique
+  authId    String     @unique
   email     String     @unique
   createdAt DateTime   @default(now())
   tierLists TierList[]

@@ -111,43 +111,49 @@ export async function PATCH(
 
       await Promise.all(
         tiers.map((tier) =>
-          tx.tier.upsert({
-            where: { id: tier.id },
-            update: {
-              name: tier.name,
-              bgColor: tier.bgColor,
-              textColor: tier.textColor,
-              order: tier.order,
-            },
-            create: {
-              id: tier.id,
-              name: tier.name,
-              bgColor: tier.bgColor,
-              textColor: tier.textColor,
-              order: tier.order,
-              tierListId: id,
-            },
-          }),
+          existingTierIds.has(tier.id)
+            ? tx.tier.update({
+                where: { id: tier.id },
+                data: {
+                  name: tier.name,
+                  bgColor: tier.bgColor,
+                  textColor: tier.textColor,
+                  order: tier.order,
+                },
+              })
+            : tx.tier.create({
+                data: {
+                  id: tier.id,
+                  name: tier.name,
+                  bgColor: tier.bgColor,
+                  textColor: tier.textColor,
+                  order: tier.order,
+                  tierListId: id,
+                },
+              }),
         ),
       );
 
       await Promise.all(
         items.map((item) =>
-          tx.item.upsert({
-            where: { id: item.id },
-            update: {
-              imageUrl: item.imageUrl,
-              tierId: item.tierId,
-              order: item.order,
-            },
-            create: {
-              id: item.id,
-              imageUrl: item.imageUrl,
-              tierId: item.tierId,
-              order: item.order,
-              tierListId: id,
-            },
-          }),
+          existingItemIds.has(item.id)
+            ? tx.item.update({
+                where: { id: item.id },
+                data: {
+                  imageUrl: item.imageUrl,
+                  tierId: item.tierId,
+                  order: item.order,
+                },
+              })
+            : tx.item.create({
+                data: {
+                  id: item.id,
+                  imageUrl: item.imageUrl,
+                  tierId: item.tierId,
+                  order: item.order,
+                  tierListId: id,
+                },
+              }),
         ),
       );
     });

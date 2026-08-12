@@ -4,9 +4,9 @@ export const DEFAULT_TIER_COLORS: Record<
   string,
   { bgColor: string; textColor: string }
 > = {
-  S: { bgColor: "#ea7a79", textColor: "#2f3440" },
-  A: { bgColor: "#ebb777", textColor: "#2f3440" },
-  B: { bgColor: "#e2e86d", textColor: "#2f3440" },
-  C: { bgColor: "#7ee375", textColor: "#2f3440" },
-  D: { bgColor: "#77a9dc", textColor: "#2f3440" },
+  S: { bgColor: "#ff3b30", textColor: "#140c06" },
+  A: { bgColor: "#ff8a00", textColor: "#140c06" },
+  B: { bgColor: "#ffd400", textColor: "#140c06" },
+  C: { bgColor: "#3ddc66", textColor: "#140c06" },
+  D: { bgColor: "#3b8bff", textColor: "#140c06" },
 };

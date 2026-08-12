@@ -1,5 +1,5 @@
-import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
+import { auth } from "@/auth";
 import { UserMenu } from "../../components/user-menu";
 
 export default async function AppLayout({
@@ -7,22 +7,20 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await currentUser();
-  const fullName =
-    [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim() ||
-    user?.username ||
-    "User";
-  const email = user?.emailAddresses[0]?.emailAddress ?? "No email";
-  const imageUrl = user?.imageUrl;
+  const session = await auth();
+  const fullName = session?.user?.name || "User";
+  const email = session?.user?.email ?? "No email";
+  const imageUrl = session?.user?.image ?? undefined;
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
-      <header className="relative z-50 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur">
-        <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-6">
+    <div className="min-h-screen bg-ink-950 text-foreground">
+      <header className="relative z-50 border-b border-ink-700 bg-ink-950">
+        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
           <Link
             href="/dashboard"
-            className="font-semibold tracking-tight text-zinc-100"
+            className="font-display flex items-center gap-2 text-xl text-foreground"
           >
+            <span className="bg-accent px-1.5 py-0.5 text-accent-ink">TL</span>
             Tier List
           </Link>
           <UserMenu fullName={fullName} email={email} imageUrl={imageUrl} />

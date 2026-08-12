@@ -387,36 +387,21 @@ export function TierBoard({
       return;
     }
 
-    const signatureResponse = await fetch("/api/upload/signature", {
+    const form = new FormData();
+    for (const file of Array.from(files)) {
+      form.append("file", file);
+    }
+
+    const uploadResponse = await fetch("/api/upload", {
       method: "POST",
+      body: form,
     });
-    if (!signatureResponse.ok) {
+    if (!uploadResponse.ok) {
       return;
     }
-    const signatureData = await signatureResponse.json();
+    const { urls } = await uploadResponse.json();
 
-    const uploads = await Promise.all(
-      Array.from(files).map(async (file) => {
-        const form = new FormData();
-        form.append("file", file);
-        form.append("api_key", signatureData.apiKey);
-        form.append("timestamp", String(signatureData.timestamp));
-        form.append("signature", signatureData.signature);
-        form.append("folder", signatureData.folder);
-        const response = await fetch(
-          `https://api.cloudinary.com/v1_1/${signatureData.cloudName}/image/upload`,
-          {
-            method: "POST",
-            body: form,
-          },
-        );
-        return response.json();
-      }),
-    );
-
-    const valid = uploads
-      .filter((upload) => upload?.secure_url)
-      .map((upload) => upload.secure_url as string);
+    const valid = (urls ?? []) as string[];
     if (valid.length === 0) {
       return;
     }
@@ -441,13 +426,13 @@ export function TierBoard({
           value={title}
           onChange={(event) => setTitle(event.target.value)}
           onBlur={onTitleBlur}
-          className="min-w-[260px] flex-1 rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-lg font-semibold text-zinc-100 outline-none ring-indigo-500 focus:ring-2 disabled:opacity-80"
+          className="font-display min-w-[260px] flex-1 border border-ink-600 bg-ink-900 px-4 py-2 text-xl text-foreground outline-none focus:border-accent disabled:opacity-80"
         />
         {!readOnly && (
           <button
             type="button"
             onClick={addTier}
-            className="rounded-lg cursor-pointer border border-orange-300/40 bg-orange-500 px-4 py-2 text-sm font-semibold text-[#251300] transition hover:bg-orange-400"
+            className="cursor-pointer bg-accent px-4 py-2.5 text-sm font-bold uppercase tracking-[0.08em] text-accent-ink transition hover:bg-accent-strong"
           >
             Add Tier
           </button>
@@ -476,8 +461,10 @@ export function TierBoard({
             ))}
         </div>
 
-        <div className="mt-6 rounded-xl border border-zinc-800 bg-zinc-950 p-3">
-          <p className="mb-2 text-sm font-medium text-zinc-300">Image Pool</p>
+        <div className="mt-6 border border-ink-700 bg-ink-900 p-3">
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.1em] text-muted">
+            Image Pool
+          </p>
           <SortableContext
             items={poolItems.map((item) => item.id)}
             strategy={horizontalListSortingStrategy}
@@ -485,7 +472,7 @@ export function TierBoard({
             <div
               id="pool"
               ref={setPoolRef}
-              className={`flex min-h-24 flex-wrap gap-2 rounded-lg p-1 transition ${isPoolOver ? "bg-zinc-900" : ""}`}
+              className={`flex min-h-24 flex-wrap gap-2 p-1 transition ${isPoolOver ? "bg-ink-800" : ""}`}
             >
               {poolItems.map((item) => (
                 <DraggableItem
@@ -495,7 +482,7 @@ export function TierBoard({
                 />
               ))}
               {!readOnly && (
-                <label className="flex h-20 w-20 cursor-pointer items-center justify-center rounded-lg border border-dashed border-orange-300/40 bg-orange-500/10 text-orange-200 transition hover:border-orange-300/70 hover:bg-orange-500/20">
+                <label className="flex h-20 w-20 cursor-pointer items-center justify-center border border-dashed border-accent-dim bg-accent/10 text-accent transition hover:border-accent hover:bg-accent/20">
                   <Plus className="h-6 w-6" />
                   <span className="sr-only">Upload images</span>
                   <input
@@ -513,7 +500,7 @@ export function TierBoard({
 
         <DragOverlay>
           {activeId ? (
-            <div className="relative h-20 w-20 overflow-hidden rounded-lg border border-zinc-600 bg-zinc-900 opacity-90">
+            <div className="relative h-20 w-20 overflow-hidden border border-accent bg-ink-900 opacity-90">
               <Image
                 src={
                   allItems.find((item) => item.id === activeId)?.imageUrl ?? ""

@@ -24,13 +24,13 @@ export function TierListEditorShell({ initial }: Props) {
       <div className="mb-4 flex items-center justify-between gap-3">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1 rounded-full text-xs font-semibold uppercase tracking-[0.14em] text-zinc-300 transition hover:border-orange-300/40 hover:text-orange-200"
+          className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-[0.14em] text-muted transition hover:text-accent"
         >
           <ChevronLeft className="h-4 w-4" />
           Back to dashboard
         </Link>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-zinc-400">
+          <span className="text-xs font-semibold uppercase tracking-[0.06em] text-subtle">
             {viewOnly
               ? "View only mode"
               : isSaving || manualSaving
@@ -48,7 +48,7 @@ export function TierListEditorShell({ initial }: Props) {
                 await manualSaveHandler();
                 setManualSaving(false);
               }}
-              className="rounded-md cursor-pointer border border-orange-300/40 bg-orange-500 px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-[#251300] transition hover:bg-orange-400 disabled:cursor-not-allowed disabled:opacity-70"
+              className="cursor-pointer bg-accent px-3 py-2 text-xs font-bold uppercase tracking-[0.08em] text-accent-ink transition hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-70"
               disabled={!manualSaveHandler || manualSaving}
             >
               Save
@@ -57,7 +57,7 @@ export function TierListEditorShell({ initial }: Props) {
           <button
             type="button"
             onClick={() => setViewOnly((prev) => !prev)}
-            className="rounded-md cursor-pointer border border-zinc-600 bg-zinc-900 px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-zinc-200 transition hover:border-zinc-500 hover:bg-zinc-800"
+            className="cursor-pointer border border-ink-600 bg-ink-900 px-3 py-2 text-xs font-bold uppercase tracking-[0.08em] text-foreground transition hover:border-ink-500 hover:bg-ink-800"
           >
             {viewOnly ? "Edit Mode" : "View Only"}
           </button>
@@ -67,7 +67,7 @@ export function TierListEditorShell({ initial }: Props) {
       {viewOnly ? (
         <TierListView data={initial} />
       ) : (
-        <div className="rounded-2xl border border-zinc-800/80 bg-zinc-950/70 p-3 shadow-[0_18px_50px_rgba(0,0,0,0.35)] sm:p-4">
+        <div className="border border-ink-700 bg-ink-950 p-3 sm:p-4">
           <TierBoard
             initial={initial}
             onSavingChange={setIsSaving}

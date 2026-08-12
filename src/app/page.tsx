@@ -1,12 +1,14 @@
-import { Show, SignInButton } from "@clerk/nextjs";
 import { Share2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { auth, signIn } from "@/auth";
 
 export default async function Home() {
+  const session = await auth();
   const heroRows = [
     {
       tier: "S",
+      color: "var(--tier-s)",
       label: "Legendary",
       images: [
         "/hero/s-1.jpg",
@@ -17,76 +19,112 @@ export default async function Home() {
     },
     {
       tier: "A",
+      color: "var(--tier-a)",
       label: "Certified",
       images: ["/hero/a-1.jpg", "/hero/a-2.jpg"],
     },
-    { tier: "B", label: "Solid", images: ["/hero/b-1.jpg"] },
-    { tier: "C", label: "Mid", images: ["/hero/c-1.jpg", "/hero/c-2.jpg"] },
+    {
+      tier: "B",
+      color: "var(--tier-b)",
+      label: "Solid",
+      images: ["/hero/b-1.jpg"],
+    },
+    {
+      tier: "C",
+      color: "var(--tier-c)",
+      label: "Mid",
+      images: ["/hero/c-1.jpg", "/hero/c-2.jpg"],
+    },
     {
       tier: "D",
+      color: "var(--tier-d)",
       label: "Uninstall",
       images: ["/hero/d-1.jpg", "/hero/d-2.jpg"],
     },
   ] as const;
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#0c0c11] text-zinc-100">
+    <div className="relative min-h-screen overflow-hidden bg-ink-950 text-foreground">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
-      <div className="pointer-events-none absolute -left-20 top-12 h-64 w-64 rounded-full bg-orange-500/18 blur-[100px]" />
-      <div className="pointer-events-none absolute -right-12 bottom-10 h-72 w-72 rounded-full bg-orange-400/14 blur-[120px]" />
 
       <main className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center px-6 py-10">
-        <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
+        <section className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
           <div className="space-y-6">
-            <p className="inline-flex items-center rounded-full border border-orange-300/30 bg-orange-500/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-[0.2em] text-orange-200">
-              Rank. Roast. Repeat.
+            <p
+              className="inline-flex items-center gap-2 bg-accent px-4 py-1.5 text-sm font-bold uppercase tracking-[0.2em] text-accent-ink"
+              style={{ clipPath: "polygon(0 0, 100% 0, 96% 100%, 0% 100%)" }}
+            >
+              Drag. Rank. Share.
             </p>
 
-            <h1 className="max-w-3xl text-5xl font-bold uppercase leading-[0.95] tracking-[0.02em] text-zinc-100 sm:text-6xl lg:text-7xl">
-              Tier List Arena
+            <h1 className="font-display max-w-3xl text-6xl leading-[0.88] text-foreground sm:text-7xl lg:text-8xl">
+              Tier List
+              <br />
             </h1>
 
+            <p className="max-w-md text-base font-medium text-muted">
+              Drag it. Rank it. Slap a label on it.
+            </p>
+
             <div className="flex flex-wrap items-center gap-3">
-              <Show when="signed-out">
-                <SignInButton mode="modal">
-                  <div className="cursor-pointer rounded-xl border border-orange-300/40 bg-orange-500 px-6 py-3 text-sm font-bold uppercase tracking-[0.12em] text-[#251300] transition hover:-translate-y-0.5 hover:bg-orange-400">
-                    Sign In with Google
-                  </div>
-                </SignInButton>
-              </Show>
-              <Show when="signed-in">
+              {session?.user ? (
                 <Link
                   href="/dashboard"
-                  className="rounded-xl border border-orange-300/40 bg-orange-500 px-6 py-3 text-sm font-bold uppercase tracking-[0.12em] text-[#251300] transition hover:-translate-y-0.5 hover:bg-orange-400"
+                  className="cursor-pointer bg-accent px-7 py-3.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-ink transition hover:-translate-y-0.5 hover:bg-accent-strong"
+                  style={{
+                    clipPath:
+                      "polygon(0 0, 100% 0, 100% 70%, 92% 100%, 0 100%)",
+                  }}
                 >
                   Open Dashboard
                 </Link>
-              </Show>
+              ) : (
+                <form
+                  action={async () => {
+                    "use server";
+                    await signIn("google", { redirectTo: "/dashboard" });
+                  }}
+                >
+                  <button
+                    type="submit"
+                    className="cursor-pointer bg-accent px-7 py-3.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-ink transition hover:-translate-y-0.5 hover:bg-accent-strong"
+                    style={{
+                      clipPath:
+                        "polygon(0 0, 100% 0, 100% 70%, 92% 100%, 0 100%)",
+                    }}
+                  >
+                    Sign In with Google
+                  </button>
+                </form>
+              )}
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-white/8 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.25)] backdrop-blur-2xl">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(255,173,92,0.2),transparent_45%),radial-gradient(circle_at_90%_100%,rgba(255,255,255,0.14),transparent_40%)]" />
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-zinc-300">
+          <div className="relative border border-ink-600 bg-ink-900 p-5">
+            <div className="mb-4 flex items-center justify-between border-b border-ink-700 pb-3">
+              <h2 className="font-display text-sm text-muted">
                 Games I played
               </h2>
-
-              {/* share icon */}
-              <Share2 className="h-4 w-4 text-zinc-400" />
+              <Share2 className="h-4 w-4 text-subtle" />
             </div>
 
-            <div className="relative space-y-2">
+            <div className="space-y-2">
               {heroRows.map((row) => (
                 <div
                   key={row.tier}
-                  className="grid grid-cols-[52px_1fr] overflow-hidden rounded-xl border border-zinc-700/80 bg-zinc-950/70"
+                  className="grid grid-cols-[52px_1fr] overflow-hidden border border-ink-700 bg-ink-950"
                 >
-                  <div className="flex items-center justify-center bg-orange-500/20 text-base font-extrabold text-orange-300">
+                  <div
+                    className="font-display flex items-center justify-center text-lg"
+                    style={{
+                      backgroundColor: row.color,
+                      color: "var(--tier-ink)",
+                    }}
+                  >
                     {row.tier}
                   </div>
                   <div className="flex items-center justify-between px-3 py-2">
-                    <span className="text-sm font-medium text-zinc-200">
+                    <span className="text-sm font-semibold text-foreground">
                       {row.label}
                     </span>
                     <div className="flex gap-1.5">
@@ -94,7 +132,7 @@ export default async function Home() {
                         row.images.map((imageSrc) => (
                           <div
                             key={imageSrc}
-                            className="relative h-7 w-7 overflow-hidden rounded-sm border border-zinc-700"
+                            className="relative h-7 w-7 overflow-hidden border border-ink-600"
                           >
                             <Image
                               src={imageSrc}
@@ -107,9 +145,9 @@ export default async function Home() {
                         ))
                       ) : (
                         <>
-                          <span className="h-7 w-7 rounded-sm bg-zinc-800" />
-                          <span className="h-7 w-7 rounded-sm bg-zinc-800" />
-                          <span className="h-7 w-7 rounded-sm bg-zinc-800" />
+                          <span className="h-7 w-7 bg-ink-700" />
+                          <span className="h-7 w-7 bg-ink-700" />
+                          <span className="h-7 w-7 bg-ink-700" />
                         </>
                       )}
                     </div>
@@ -120,29 +158,32 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="mt-16 grid gap-3 sm:grid-cols-3">
-          <article className="rounded-lg border border-zinc-700 bg-zinc-900/80 p-4">
-            <p className="text-xs uppercase tracking-[0.14em] text-zinc-400">
+        <section className="mt-16 grid gap-px overflow-hidden border border-ink-700 bg-ink-700 sm:grid-cols-3">
+          <article className="bg-ink-900 p-5">
+            <p className="font-display text-3xl text-accent">01</p>
+            <p className="mt-2 text-xs font-bold uppercase tracking-[0.16em] text-muted">
               Profile Setup
             </p>
-            <p className="mt-2 text-sm font-medium text-zinc-200">
+            <p className="mt-1 text-sm font-medium text-foreground">
               Create your profile instantly with Google sign-in.
             </p>
           </article>
-          <article className="rounded-lg border border-zinc-700 bg-zinc-900/80 p-4">
-            <p className="text-xs uppercase tracking-[0.14em] text-zinc-400">
+          <article className="bg-ink-900 p-5">
+            <p className="font-display text-3xl text-accent">02</p>
+            <p className="mt-2 text-xs font-bold uppercase tracking-[0.16em] text-muted">
               Autosave
             </p>
-            <p className="mt-2 text-sm font-medium text-zinc-200">
-              Autosave keeps every rank move safe
+            <p className="mt-1 text-sm font-medium text-foreground">
+              Autosave keeps every rank move safe.
             </p>
           </article>
-          <article className="rounded-lg border border-zinc-700 bg-zinc-900/80 p-4">
-            <p className="text-xs uppercase tracking-[0.14em] text-zinc-400">
+          <article className="bg-ink-900 p-5">
+            <p className="font-display text-3xl text-accent">03</p>
+            <p className="mt-2 text-xs font-bold uppercase tracking-[0.16em] text-muted">
               Public Link
             </p>
-            <p className="mt-2 text-sm font-medium text-zinc-200">
-              Share your tier instantly with anyone
+            <p className="mt-1 text-sm font-medium text-foreground">
+              Share your tier instantly with anyone.
             </p>
           </article>
         </section>

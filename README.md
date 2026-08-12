@@ -6,17 +6,17 @@ TierMaker-style full-stack app with persistent profiles and saved tier lists.
 
 - Frontend: Next.js App Router + TypeScript + TailwindCSS
 - Backend: Next.js API routes
-- DB: PostgreSQL + Prisma ORM
-- Auth: Clerk (Google)
-- Storage: Cloudinary
+- DB: Supabase (PostgreSQL) + Prisma ORM
+- Auth: Auth.js (next-auth v5) with Google
+- Storage: Supabase Storage
 - DnD: `@dnd-kit`
 
 ## MVP Features
 
-- Clerk auth + per-user dashboard
+- Google sign-in (Auth.js) + per-user dashboard
 - Create/edit/delete/duplicate tier lists
 - Default tiers (`S, A, B, C, D`) + dynamic add/remove tiers
-- Multi-image upload to Cloudinary
+- Multi-image upload to Supabase Storage
 - Drag images between tiers and pool, reorder within rows
 - Debounced autosave to database
 - Public share link (`/share/:slug`) in read-only mode
@@ -30,12 +30,13 @@ src/
       dashboard/page.tsx
       tier-lists/[id]/page.tsx
     api/
+      auth/[...nextauth]/route.ts
       tier-lists/
         route.ts
         [id]/route.ts
         [id]/duplicate/route.ts
         [id]/share/route.ts
-      upload/signature/route.ts
+      upload/route.ts
     share/[slug]/page.tsx
   components/
     dashboard-grid.tsx
@@ -49,9 +50,10 @@ src/
     tier-list.ts
   types/
     tier-list.ts
+  auth.ts
+  proxy.ts
 prisma/
   schema.prisma
-middleware.ts
 ```
 
 ## Setup
@@ -62,8 +64,9 @@ middleware.ts
 cp .env.example .env.local
 ```
 
-1. Add your real values for Clerk / Cloudinary / PostgreSQL.
-2. Generate Prisma client and run migration:
+1. Add your real values for Google OAuth / Supabase. Create a Google OAuth client at https://console.cloud.google.com/apis/credentials with redirect URI `<your-url>/api/auth/callback/google`, and generate `AUTH_SECRET` with `npx auth secret`.
+2. In your Supabase project, create a public Storage bucket named `tier-list-uploads`.
+3. Generate Prisma client and run migration:
 
 ```bash
 npm run prisma:generate
@@ -85,5 +88,5 @@ npm run dev
 - `DELETE /api/tier-lists/:id` - delete list
 - `POST /api/tier-lists/:id/duplicate` - duplicate list
 - `POST /api/tier-lists/:id/share` - enable share and return slug
-- `POST /api/upload/signature` - signed Cloudinary upload metadata
+- `POST /api/upload` - upload images to Supabase Storage, returns public URLs
 
